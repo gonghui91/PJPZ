@@ -1,11 +1,13 @@
 package com.pjpz.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.co.senab.photoview.PhotoView;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -21,8 +23,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.pjpz.R;
-import com.pjpz.utils.FileManager;
-import com.pjpz.utils.MyAssetManager;
 import com.pjpz.widget.HackyViewPager;
 
 public class ImgArticleFragment extends Fragment {
@@ -62,6 +62,8 @@ public class ImgArticleFragment extends Fragment {
 		RelativeLayout layout_img = (RelativeLayout) view
 				.findViewById(R.id.layout_img);
 		layout_img.addView(viewPager);
+		layout_img.removeView(tvCount);
+		layout_img.addView(tvCount);
 		viewPager.setOnPageChangeListener(onPageChangeListener);
 		// 初始化图片异步加载类
 		viewPager.setAdapter(new mPagerAdapter());
@@ -101,7 +103,6 @@ public class ImgArticleFragment extends Fragment {
 
 		@Override
 		public View instantiateItem(ViewGroup container, int position) {
-
 			final PhotoView photoView = new PhotoView(context);
 			ImageLoader.getInstance().loadImage(imageUrls[position], options,
 					new ImageLoadingListener() {
@@ -139,7 +140,8 @@ public class ImgArticleFragment extends Fragment {
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			container.removeView((View) object);
+			View view = (View) object;
+			((ViewPager) container).removeView(view);
 		}
 
 		@Override

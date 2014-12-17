@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">品鉴彭州</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_catalog">CatalogActivity</string>
+    <string name="catalog">目录/CONTENTS</string>
+    <string name="title_activity_article">ArticleActivity</string>
+    <string name="comment">评论</string>
+    <string name="tv_praise">点赞</string>
+    <string name="tv_comment">评论</string>
+    <string name="tv_collect">收藏</string>
+    <string name="tv_share">分享</string>
+    <string name="txt">文字版</string>
+    <string name="img">图片版</string>
+    <string name="content">    朱清时，男，化学物理教授，博士生导师，中国科学院院士、第三世界科学院院士。1998年6月就任中国科学技术大学校长以来，致力于规划和组织学校面向21世纪建设一流大学，卓有成效地推进了学校教学、科研、管理和后勤服务等各项事业的改革与发展。自2009年9月10日起，朱清时院士就任南方科技大学创校校长，进行“去行政化、教授治校”理念下的办学实验，立志建立国内一流研究性大学，使南方科技大学成为中国的“加州理工大学”，并获得“2010中国最具魅力校长”称号。     朱清时生于1946年2月,父亲为他取名“清时”，典出唐代杜牧的诗《将赴吴兴登乐游原》：“清时有味是无能，闲爱孤云静爱僧。欲把一麾江海去，乐游原上望昭陵。”</string>
+
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dip" >
+
+    <EditText
+        android:id="@+id/etx_content"
+        android:layout_width="match_parent"
+        android:layout_height="108dip"
+        android:background="@drawable/selector_comment_etx"
+        android:gravity="start"
+        android:inputType="text"
+        android:lines="3"
+        android:padding="5dip" />
+
+    <Button
+        android:id="@+id/btn_comment"
+        android:layout_width="54dip"
+        android:layout_height="36dip"
+        android:layout_gravity="end"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/comment_button"
+        android:text="@string/tv_comment" />
+
+    <ListView
+        android:id="@+id/commentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="3dip" >
+    </ListView>
+
+</LinearLayout>

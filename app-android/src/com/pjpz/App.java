@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 /**
  * 
- * Create by gh on 14-12-15
+ * Create by gonghui on 14-12-15
  */
 public class App extends Application {
 	private static Context mContext;

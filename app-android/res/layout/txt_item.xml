@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="100dip"
     android:orientation="horizontal"
-    android:padding="5dip" >
+    android:background="@color/white"
+    android:paddingRight="10dip" 
+    android:paddingLeft="10dip">
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="2dip"
         android:layout_marginRight="2dip"
         android:layout_weight="1"

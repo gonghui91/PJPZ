@@ -1,49 +1,48 @@
 package com.pjpz.model;
 
+import java.util.List;
+
+/**
+ * 评论
+ * 
+ * @author gh
+ *
+ */
 public class Comment {
-	private String userName;
-	private String content;
-	private String reply;
+	public String commentId;
+	public String userName;
+	public String content;
+	public String reply;
 
-	public Comment() {
-		// TODO Auto-generated constructor stub
+	public static class ListCommentRequestData extends BaseModel{
+		public String commandName;
+		public String commandType;
+		public String commandStatus;
+		public String commandDevice;
+		public RequestItem commandParam;
+		public List<Comment> commandData;
+
 	}
+	public static class AddCommentRequestData extends BaseModel{
+		public String commandName;
+		public String commandType;
+		public String commandStatus;
+		public String commandDevice;
+		public AddItem commandParam;
+		public List<Comment> commandData;
 
-	public Comment(String userName, String content, String reply) {
-		super();
-		this.userName = userName;
-		this.content = content;
-		this.reply = reply;
 	}
-
-	public String getUserName() {
-		return userName;
+	public static class RequestItem {
+		public String articleId;
 	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public static class AddItem {
+		public String articleId;
+		public String content;
 	}
-
-	public String getContent() {
-		return content;
+	public static class CommentItem {
+		public String commentId;
+		public String userName;
+		public String content;
+		public String reply;
 	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public String getReply() {
-		return reply;
-	}
-
-	public void setReply(String reply) {
-		this.reply = reply;
-	}
-
-	@Override
-	public String toString() {
-		return "Comment [userName=" + userName + ", content=" + content
-				+ ", reply=" + reply + "]";
-	}
-
 }

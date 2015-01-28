@@ -1,31 +1,30 @@
 package com.pjpz.ui;
 
+import java.util.List;
+
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
+import android.view.WindowManager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pjpz.R;
-import com.pjpz.fragment.CommentFragment;
-import com.pjpz.fragment.TxtArticleFragment;
-import com.pjpz.ui.base.BaseActivity;
-import com.pjpz.widget.MorePopupWindow;
+import com.pjpz.model.Catalog;
+import com.pjpz.ui.fragment.ArticleFragment;
+import com.pjpz.ui.fragment.CommentFragment;
+import com.pjpz.utils.OnSelectListener;
 
-public class ArticleActivity extends BaseActivity {
-	private TxtArticleFragment articleFragment;
+public class ArticleActivity extends BaseActivity implements OnSelectListener {
+	private ArticleFragment articleFragment;
 	private CommentFragment commentFragment;
 	private FragmentManager fragmentManager;
-	private ImageView iv_more;
-	private TextView menuName;
-	private ImageView btnGoback;
-	private String articleName = "白鹿就是我的根";
-	private PopupWindow morePopup;
+	private Bundle bundle;
+	private List<Catalog> catalogs;
+	private Catalog catalog;
+	private int position;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,49 +36,26 @@ public class ArticleActivity extends BaseActivity {
 	}
 
 	private void initView() {
-		iv_more = (ImageView) findViewById(R.id.iv_more);
-		iv_more.setOnClickListener(onClickListener);
-		menuName = (TextView) findViewById(R.id.tv_acticleName);
-		btnGoback = (ImageView) findViewById(R.id.iv_goback);
-		btnGoback.setOnClickListener(onClickListener);
+		bundle = getIntent().getExtras();
+		String catalogStr = bundle.getString("catalog");
+		catalogs = new Gson().fromJson(catalogStr,
+				new TypeToken<List<Catalog>>() {
+				}.getType());
+		position = bundle.getInt("position");
+		catalog = catalogs.get(position);
+		actionBar.setTitle(catalog.articleName);
 	}
 
-	private OnClickListener onClickListener = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			switch (v.getId()) {
-			case R.id.iv_goback:
-				if (articleFragment.isVisible()) {
-					// 文章界面是退出文章
-					ArticleActivity.this.finish();
-				} else if (commentFragment.isVisible()) {
-					// 退出评论到文章
-					setTabSelection(0);
-				}
-				break;
-
-			case R.id.iv_more:
-				showMorePop();
-				break;
-			case R.id.tv_praise:
-				morePopup.dismiss();
-				// ToastUtils.showShort(getString(R.string.tv_praise));
-				break;
-			case R.id.tv_comment:
-				morePopup.dismiss();
-				setTabSelection(1);
-				break;
-			case R.id.tv_collect:
-				morePopup.dismiss();
-				break;
-			case R.id.tv_share:
-				morePopup.dismiss();
-				break;
-			}
+	@Override
+	public void onBackPressed() {
+		if (articleFragment.isVisible()) {
+			// 文章界面是退出文章
+			ArticleActivity.this.finish();
+		} else if (commentFragment.isVisible()) {
+			// 退出评论到文章
+			setTabSelection(0);
 		}
-
-	};
+	}
 
 	/**
 	 * 根据传入的index参数来设置选中的tab页。
@@ -97,25 +73,30 @@ public class ArticleActivity extends BaseActivity {
 		switch (index) {
 		case 0:
 			// 文章内容
-			iv_more.setVisibility(View.VISIBLE);
-			menuName.setText(articleName);
 			if (articleFragment == null) {
-				articleFragment = new TxtArticleFragment();
-				transaction.add(R.id.content, articleFragment);
+				articleFragment = new ArticleFragment();
+				articleFragment.setArguments(bundle);
+				transaction.add(R.id.content, articleFragment).setTransition(
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			} else {
-				transaction.show(articleFragment);
+				transaction.show(articleFragment).setTransition(
+						FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			}
 			break;
 
 		case 1:
 			// 评论
-			iv_more.setVisibility(View.INVISIBLE);
-			menuName.setText(getString(R.string.comment));
+//			 transaction.setCustomAnimations(R.anim.slide_in_bottom,
+//			 R.anim.slide_in_top);
+			System.out.println(bundle.getString("articleId"));
 			if (commentFragment == null) {
 				commentFragment = new CommentFragment();
-				transaction.add(R.id.content, commentFragment);
+				commentFragment.setArguments(bundle);
+				transaction.add(R.id.content, commentFragment).setTransition(
+						FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			} else {
-				transaction.show(commentFragment);
+				transaction.show(commentFragment).setTransition(
+						FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			}
 			break;
 		}
@@ -143,30 +124,50 @@ public class ArticleActivity extends BaseActivity {
 		}
 	}
 
-	/**
-	 * 展示更多选项的popupwindow
-	 */
-	private void showMorePop() {
-		morePopup = new MorePopupWindow(ArticleActivity.this, onClickListener);
-		morePopup.showAsDropDown(iv_more);
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.article, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			if (articleFragment.isVisible()) {
+				// 文章界面是退出文章
+				ArticleActivity.this.finish();
+			} else if (commentFragment.isVisible()) {
+				// 退出评论到文章
+				setTabSelection(0);
+			}
+			break;
+
+		default:
+			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onShare(boolean isShareOpen) {
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		if (isShareOpen) {
+			lp.alpha = 0.3f;
+			getWindow().setAttributes(lp);
+		} else {
+			lp.alpha = 1f;
+			getWindow().setAttributes(lp);
+		}
+	}
+
+	@Override
+	public void onComment() {
+		setTabSelection(1);
+	}
+
+	@Override
+	public void setTitle(String title) {
+		actionBar.setTitle(title);
 	}
 }

@@ -1,4 +1,4 @@
-package com.pjpz.widget;
+package com.pjpz.view;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

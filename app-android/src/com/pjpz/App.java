@@ -8,10 +8,12 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.pjpz.data.Constants;
+import com.pjpz.utils.SPUtils;
 
 /**
  * 
- * Create by gonghui on 14-12-15
+ * Create by gonghui on 14-12-15s
  */
 public class App extends Application {
 	private static Context mContext;
@@ -21,6 +23,7 @@ public class App extends Application {
 		super.onCreate();
 		mContext = getApplicationContext();
 		initImageLoader(getApplicationContext());
+//		Constant.url = SPUtils.get(mContext, "url", Constant.url).toString();
 	}
 
 	public static Context getContext() {

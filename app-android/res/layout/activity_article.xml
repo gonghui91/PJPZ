@@ -4,60 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.pjpz.ui.ArticleActivity" >
-
-    <RelativeLayout
-        android:id="@+id/zhuye_liner"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height"
-        android:background="@drawable/zhuye_01"
-        android:gravity="center_vertical"
-        android:paddingEnd="4dip"
-        android:paddingLeft="4dip"
-        android:paddingRight="4dip"
-        android:paddingStart="4dip" >
-
-        <ImageView
-            android:id="@+id/iv_goback"
-            android:layout_width="46dip"
-            android:layout_height="24dip"
-            android:layout_centerVertical="true"
-            android:src="@drawable/goback" />
-
-        <TextView
-            android:id="@+id/tv_acticleName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="5dip"
-            android:layout_marginLeft="5dip"
-            android:layout_marginRight="5dip"
-            android:layout_marginStart="5dip"
-            android:layout_toEndOf="@+id/iv_goback"
-            android:layout_toLeftOf="@+id/iv_more"
-            android:layout_toRightOf="@+id/iv_goback"
-            android:layout_toStartOf="@+id/iv_more"
-            android:gravity="center"
-            android:text="@string/catalog"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/iv_more"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/more" />
-    </RelativeLayout>
-
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="4dip" >
+        android:layout_height="match_parent" >
     </FrameLayout>
 
 </LinearLayout>

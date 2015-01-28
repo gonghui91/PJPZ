@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
-        android:layout_marginStart="10dip"
         android:text="太阳神鸟飞起的地方"
         android:textColor="@color/articleName"
         android:textSize="18sp"

@@ -1,9 +1,6 @@
-package com.pjpz.adapter;
+package com.pjpz.ui.adapter;
 
 import java.util.List;
-
-import com.pjpz.R;
-import com.pjpz.model.Comment;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.pjpz.R;
+import com.pjpz.model.Comment;
 
 public class CommentAdapter extends BaseAdapter {
 
@@ -63,13 +63,15 @@ public class CommentAdapter extends BaseAdapter {
 		} else {
 			holder = (CommentViewHolder) convertView.getTag();
 		}
-		holder.replyer.setText(comment.getUserName() + ":");
-		holder.content.setText(comment.getContent());
-		String reply = comment.getReply();
+//		holder.replyer.setText(comment.userName + ":");
+		holder.replyer.setText("游客:");
+		holder.content.setText(comment.content);
+		String reply = comment.reply;
 		if (reply == null || "".equals(reply)) {
 			holder.admin.setVisibility(View.GONE);
 		} else {
-			holder.replyer2.setText(comment.getUserName() + ":");
+//			holder.replyer2.setText(comment.userName + ":");
+			holder.replyer2.setText("游客:");
 			holder.content2.setText(reply);
 		}
 		return convertView;

@@ -14,9 +14,7 @@
             android:id="@+id/tv_replyer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="3dip"
             android:layout_marginRight="3dip"
-            android:text="静夜思源："
             android:textColor="@color/personName"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -38,7 +36,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="3dip"
             android:layout_marginRight="3dip"
             android:text="管理员"
             android:textColor="@color/personName"
@@ -48,7 +45,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="3dip"
             android:layout_marginRight="3dip"
             android:text="回复"
             android:textSize="15sp" />

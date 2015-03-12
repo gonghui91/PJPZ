@@ -6,10 +6,14 @@ import com.pjpz.utils.SDCardUtils;
 public class Constants {
 	public static final int Text = 0;
 	public static final int Image = 1;
+	public static final int WECHAT = 11;
+	public static final int WECHAT_MOMENT = 12;
+	public static final int WEIBO = 13;
+	public static final int TENCENT = 14;
 	public static final String WX_APP_ID = "wx70195b6ac13db7b2";
 	public static final String WB_APP_ID = "2045436852";
-//	public static String url = "http://125.65.108.108:9080/mobile/interactive";
-	public static String url = "http://192.168.0.101:80/mobile/interactive";
+	public static String url = "http://125.65.108.108:9080/mobile/interactive";
+//	public static String url = "http://192.168.1.3:80/mobile/interactive";
 	public static final String IMAGE = "image";
 	public static final String TEXT = "text";
 	public static final int[] COLORS = { R.color.holo_blue_light,

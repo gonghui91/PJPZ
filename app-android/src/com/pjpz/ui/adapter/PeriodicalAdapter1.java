@@ -10,11 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.etsy.android.grid.StaggeredGridView;
 import com.pjpz.R;
 import com.pjpz.data.ImageCacheManager;
 import com.pjpz.model.Category;

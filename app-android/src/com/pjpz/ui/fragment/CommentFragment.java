@@ -41,7 +41,6 @@ public class CommentFragment extends BaseFragment {
 		View view = inflater.inflate(R.layout.layout_comment, container, false);
 		Bundle bundle = getArguments();
 		articleId = bundle.getString("articleId");
-		System.out.println(bundle.getString("category"));
 		category = Category.valueOf(bundle.getString("category"));
 		commentList = (ListView) view.findViewById(R.id.commentList);
 		progressDialog = new CustomProgressDialog(getActivity());

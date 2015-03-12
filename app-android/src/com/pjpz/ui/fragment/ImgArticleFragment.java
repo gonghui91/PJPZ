@@ -44,6 +44,7 @@ import com.pjpz.model.OptRequestData;
 import com.pjpz.utils.BitmapUtils;
 import com.pjpz.utils.DialogUtil;
 import com.pjpz.utils.OnSelectListener;
+import com.pjpz.utils.ToastUtils;
 import com.pjpz.view.CustomProgressDialog;
 import com.pjpz.view.HackyViewPager;
 import com.pjpz.view.ProgressWheel;
@@ -112,7 +113,6 @@ public class ImgArticleFragment extends BaseFragment {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		System.out.println(newConfig.orientation);
 	}
 
 	private void changeBtnStatus() {
@@ -133,6 +133,10 @@ public class ImgArticleFragment extends BaseFragment {
 			btn_back.setClickable(false);
 			btn_forward.setClickable(false);
 		}
+		btn_praise.setClickable(true);
+		btn_praise.setImageDrawable(context.getResources().getDrawable(R.drawable.article_like_normal));
+		btn_collect.setClickable(true);
+		btn_collect.setImageDrawable(context.getResources().getDrawable(R.drawable.article_favorite_normal));
 	}
 
 	private void regToWx() {
@@ -222,7 +226,7 @@ public class ImgArticleFragment extends BaseFragment {
 		}
 	};
 
-	private void opt(String opt) {
+	private void opt(final String opt) {
 
 		OptRequestData requestData = new OptRequestData();
 		requestData.commandName = "articleopt";
@@ -237,8 +241,19 @@ public class ImgArticleFragment extends BaseFragment {
 				requestData.toJson(), OptRequestData.class,
 				new Response.Listener<OptRequestData>() {
 					@Override
-					public void onResponse(OptRequestData arg0) {
-
+					public void onResponse(OptRequestData response) {
+						if (response.commandStatus.equals(Constants.TRUE)) {
+							if (opt.equals("praise")) {
+								btn_praise.setClickable(false);
+								btn_praise.setImageDrawable(context.getResources().getDrawable(R.drawable.article_like_pressed));
+								ToastUtils.showShort("已赞");
+							}
+							if (opt.equals("collect")) {
+								btn_collect.setClickable(false);
+								btn_collect.setImageDrawable(context.getResources().getDrawable(R.drawable.article_favorite_pressed));
+								ToastUtils.showShort("已收藏");
+							}
+						}
 					}
 				}, errorListener());
 		executeRequest(gsonRequest);

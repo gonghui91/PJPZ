@@ -34,12 +34,11 @@ public class CataLogAdapter extends BaseAdapter {
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		return catalogs.get(position).articleId;
+		return catalogs.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
@@ -51,6 +50,10 @@ public class CataLogAdapter extends BaseAdapter {
 			holder = new CatalogViewHolder();
 			convertView = LayoutInflater.from(context).inflate(
 					R.layout.catalog_item, null);
+			holder.first = (TextView) convertView
+					.findViewById(R.id.tv_firstname);
+			holder.second = (TextView) convertView
+					.findViewById(R.id.tv_secondname);
 			holder.num = (TextView) convertView
 					.findViewById(R.id.tv_catalogNum);
 			holder.name = (TextView) convertView
@@ -59,40 +62,56 @@ public class CataLogAdapter extends BaseAdapter {
 		} else {
 			holder = (CatalogViewHolder) convertView.getTag();
 		}
+//		System.out.println("catalog.first--"+catalog.first);
+		holder.first.setText(catalog.first);
+//		if (catalog.first != null) {
+			if (catalog.first != null&&(position == 0||!catalog.first.equals(((Catalog) getItem(position - 1)).first))) {
+				holder.first.setVisibility(View.VISIBLE);
+			}
+			else{
+				holder.first.setVisibility(View.GONE);
+			}
+//		}
+//		if (position == 0) {
+//			holder.first.setVisibility(View.VISIBLE);
+//		} else {
+//			if (catalog.first != null && !catalog.first.equals(((Catalog) getItem(position - 1)).first)) {
+//				holder.first.setVisibility(View.VISIBLE);
+//			} else {
+//				holder.first.setVisibility(View.GONE);
+//			}
+//		}
+		if (category.ordinal() == 1) {
+			holder.second.setText(catalog.second);
+			if (catalog.second != null&&(position == 0||!catalog.second.equals(((Catalog) getItem(position - 1)).second))) {
+				holder.second.setVisibility(View.VISIBLE);
+			}else{
+				holder.second.setVisibility(View.GONE);
+			}
+//			if (position == 0) {
+//				holder.second.setVisibility(View.VISIBLE);
+//			} else {
+//				String presecond = ((Catalog) getItem(position - 1)).second;
+//				if (catalog.second != null && !catalog.second.equals(presecond)) {
+//					holder.second.setVisibility(View.VISIBLE);
+//				} else {
+//					holder.second.setVisibility(View.GONE);
+//				}
+//			}
+		}
 		if (catalog.articlePage != null && catalog.articlePage != ""
 				&& category.ordinal() == 1) {
 			holder.num.setText(catalog.articlePage);
 		} else {
 			holder.num.setText("" + (position + 1));
 		}
-		// holder.num.setText(catalog.articleId);
 		holder.name.setText(catalog.articleName);
-		// holder.name.setText("");
-		// convertView.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// Bundle bundle = new Bundle();
-		// bundle.putSerializable("catalog", new Gson().toJson(catalogs));
-		// bundle.putString("category", category.name());
-		// bundle.putString("articleName", catalog.articleName);
-		// bundle.putInt("position", position);
-		// switch (category.ordinal()) {
-		// case Constants.Text:
-		// IntentUtils.startIntent(context, ArticleActivity.class,
-		// bundle);
-		// break;
-		// case Constants.Image:
-		// IntentUtils.startIntent(context, ImgArticleActivity.class,
-		// bundle);
-		// break;
-		// }
-		// }
-		// });
 		return convertView;
 	}
 
 	class CatalogViewHolder {
+		TextView first;
+		TextView second;
 		TextView num;
 		TextView name;
 	}

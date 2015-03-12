@@ -14,6 +14,8 @@ import com.google.gson.Gson;
  */
 public class Catalog {
 	public String catalogId;
+	public String first;
+	public String second;
 	public String articleName;
 	public String articlePage;
 	public String articleId;

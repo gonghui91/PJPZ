@@ -35,7 +35,7 @@ public class GsonRequest<T> extends JsonRequest<T> {
 			Map<String, String> mHeaders, Listener<T> listener,
 			ErrorListener errorListener) {
 		super(method, Constants.url, requestBody, listener, errorListener);
-		System.out.println("requestBody---"+requestBody);
+//		System.out.println("requestBody---"+requestBody);
 		this.mClazz = clazz;
 		this.mHeaders = mHeaders;
 		this.mListener = listener;

@@ -13,6 +13,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.pjpz.R;
+import com.pjpz.data.Constants;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 
 public class WelcomeActivity extends Activity implements AnimationListener {
 	private Animation alphaAnimation = null;

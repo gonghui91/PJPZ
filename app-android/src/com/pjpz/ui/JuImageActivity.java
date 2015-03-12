@@ -14,6 +14,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,8 +50,9 @@ public class JuImageActivity extends BaseActivity {
 	private HackyViewPager viewPager;
 	private CustomProgressDialog progressDialog;
 	private Category category;
-	private ImageView btn_catalog;
+//	private ImageView btn_catalog;
 	private CatalogMenu catalogMenu;
+	private String periodicalId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,18 +69,18 @@ public class JuImageActivity extends BaseActivity {
 		viewPager = new HackyViewPager(this);
 		layout_img.addView(viewPager);
 		progressDialog = new CustomProgressDialog(this);
-		btn_catalog = (ImageView) findViewById(R.id.btn_catalog);
-		btn_catalog.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showCatalog();
-			}
-		});
+//		btn_catalog = (ImageView) findViewById(R.id.btn_catalog);
+//		btn_catalog.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				showCatalog();
+//			}
+//		});
 	}
 
 	private void loadData() {
 		Bundle bundle = getIntent().getExtras();
-		String periodicalId = bundle.getString("periodicalId");
+		periodicalId = bundle.getString("periodicalId");
 		category = Category.valueOf(bundle
 				.getString(PeriodicalFragment.EXTRA_CATEGORY));
 		Catalog.CatalogRequestData requestData = new Catalog.CatalogRequestData();
@@ -102,7 +104,6 @@ public class JuImageActivity extends BaseActivity {
 			@Override
 			public void onResponse(final Catalog.CatalogRequestData response) {
 				catalogMenu = response.commandData;
-				System.out.println(catalogMenu);
 				progressDialog.dismiss();
 				if (response.commandStatus.equals(Constants.ERROR)) {
 					DialogUtil.showLoadFailDialog(JuImageActivity.this);
@@ -116,9 +117,9 @@ public class JuImageActivity extends BaseActivity {
 								catalogMenu.frontcover));
 						tv_count.setText("1/"
 								+ frontcover.size());
-						if (frontcover.size() == 1) {
-							btn_catalog.setVisibility(View.VISIBLE);
-						}
+//						if (frontcover.size() == 1) {
+//							btn_catalog.setVisibility(View.VISIBLE);
+//						}
 					} else {
 						showCatalog();
 					}
@@ -132,6 +133,7 @@ public class JuImageActivity extends BaseActivity {
 		Bundle bundle = new Bundle();
 		bundle.putString("catalog", catalogMenu.toJson());
 		bundle.putString("category", category.name());
+		bundle.putString("periodicalId", periodicalId);
 		IntentUtils.startIntent(JuImageActivity.this, CatalogActivity.class,
 				bundle);
 		JuImageActivity.this.finish();
@@ -146,11 +148,25 @@ public class JuImageActivity extends BaseActivity {
 			}
 		};
 	}
-
+	private boolean misScrolled;
 	private OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
 		@Override
-		public void onPageScrollStateChanged(int arg0) {
+		public void onPageScrollStateChanged(int state) {
+			switch (state) {
+			case ViewPager.SCROLL_STATE_DRAGGING:
+				misScrolled = false;
+				break;
+			case ViewPager.SCROLL_STATE_SETTLING:
+				misScrolled = true;
+				break;
+			case ViewPager.SCROLL_STATE_IDLE:
+				if (!misScrolled) {
+					showCatalog();
+				}
+				misScrolled = true;
+				break;
+			}
 		}
 
 		@Override
@@ -161,12 +177,12 @@ public class JuImageActivity extends BaseActivity {
 		public void onPageSelected(int position) {
 			tv_count.setText((position + 1) + "/"
 					+ viewPager.getAdapter().getCount());
-			int count = viewPager.getAdapter().getCount();
-			if (position == count - 1) {
-				btn_catalog.setVisibility(View.VISIBLE);
-			} else {
-				btn_catalog.setVisibility(View.GONE);
-			}
+//			int count = viewPager.getAdapter().getCount();
+//			if (position == count - 1) {
+//				btn_catalog.setVisibility(View.VISIBLE);
+//			} else {
+//				btn_catalog.setVisibility(View.GONE);
+//			}
 		}
 
 	};
@@ -243,13 +259,19 @@ public class JuImageActivity extends BaseActivity {
 		}
 	}
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.juimage, menu);
+		return true;
+	}
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			JuImageActivity.this.finish();
 			break;
 
-		default:
+		case R.id.action_catalog:
+			showCatalog();
 			break;
 		}
 		return super.onOptionsItemSelected(item);

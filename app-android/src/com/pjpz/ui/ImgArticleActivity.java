@@ -44,6 +44,7 @@ import com.pjpz.model.OptRequestData;
 import com.pjpz.utils.BitmapUtils;
 import com.pjpz.utils.DialogUtil;
 import com.pjpz.utils.IntentUtils;
+import com.pjpz.utils.ToastUtils;
 import com.pjpz.view.CustomProgressDialog;
 import com.pjpz.view.HackyViewPager;
 import com.pjpz.view.ProgressWheel;
@@ -71,6 +72,7 @@ public class ImgArticleActivity extends BaseActivity {
 	private int position;
 	private ImageView btn_forward, btn_back;
 	private Bundle bundle;
+	private ArrayList<String> allImages = new ArrayList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,7 @@ public class ImgArticleActivity extends BaseActivity {
 	private void initView() {
 		bundle = getIntent().getExtras();
 		articleName = bundle.getString("articleName");
+		allImages = bundle.getStringArrayList("allimage");
 		actionBar.setTitle(articleName);
 		tvCount = (TextView) view.findViewById(R.id.tv_count);
 		context = ImgArticleActivity.this;
@@ -94,6 +97,12 @@ public class ImgArticleActivity extends BaseActivity {
 		RelativeLayout layout_img = (RelativeLayout) view
 				.findViewById(R.id.layout_img);
 		layout_img.addView(viewPager);
+		viewPager.setVisibility(View.GONE);
+		tvCount.setText((position1 + 1) + "/"
+				+ allImages.size());
+		viewPager.setOnPageChangeListener(onPageChangeListener);
+		viewPager.setAdapter(new mPagerAdapter(
+				allImages));
 		btn_praise = (ImageView) view.findViewById(R.id.btn_praise);
 		btn_share = (ImageView) view.findViewById(R.id.btn_share);
 		btn_comment = (ImageView) view.findViewById(R.id.btn_comment);
@@ -135,6 +144,12 @@ public class ImgArticleActivity extends BaseActivity {
 			btn_back.setClickable(false);
 			btn_forward.setClickable(false);
 		}
+		btn_praise.setClickable(true);
+		btn_praise.setImageDrawable(context.getResources().getDrawable(
+				R.drawable.article_like_normal));
+		btn_collect.setClickable(true);
+		btn_collect.setImageDrawable(context.getResources().getDrawable(
+				R.drawable.article_favorite_normal));
 	}
 
 	private void regToWx() {
@@ -174,12 +189,20 @@ public class ImgArticleActivity extends BaseActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.btn_back:
+				if (position == 0) {
+					ToastUtils.showShort("已经是第一章了！");
+					break;
+				}
 				catalog = catalogs.get(--position);
 				actionBar.setTitle(catalog.articleName);
 				changeBtnStatus();
 				loadData();
 				break;
 			case R.id.btn_forward:
+				if (position + 1 == catalogs.size()) {
+					ToastUtils.showShort("已经是最后一章了！");
+					break;
+				}
 				catalog = catalogs.get(++position);
 				actionBar.setTitle(catalog.articleName);
 				changeBtnStatus();
@@ -211,7 +234,7 @@ public class ImgArticleActivity extends BaseActivity {
 			case R.id.iv_share_wechat:
 				sendWxReq(shareUrl, articleName,
 						SendMessageToWX.Req.WXSceneSession);
-//				opt("share");
+				opt("share");
 				if (sharePopup != null) {
 					sharePopup.dismiss();
 				}
@@ -219,10 +242,20 @@ public class ImgArticleActivity extends BaseActivity {
 			case R.id.iv_share_wechatm:
 				sendWxReq(shareUrl, articleName,
 						SendMessageToWX.Req.WXSceneTimeline);
-//				opt("share");
+				opt("share");
 				if (sharePopup != null) {
 					sharePopup.dismiss();
 				}
+				break;
+			case R.id.iv_share_sina:
+				if (sharePopup != null) {
+					sharePopup.dismiss();
+				}
+				Bundle bundle1 = new Bundle();
+				bundle1.putString("title", articleName);
+				bundle1.putString("url", shareUrl);
+				IntentUtils.startIntent(ImgArticleActivity.this,
+						WBShareActivity.class, bundle1);
 				break;
 			}
 		}
@@ -259,11 +292,19 @@ public class ImgArticleActivity extends BaseActivity {
 						if (response.commandStatus.equals(Constants.TRUE)) {
 							if (opt.equals("praise")) {
 								btn_praise.setClickable(false);
-								btn_praise.setImageDrawable(context.getResources().getDrawable(R.drawable.article_like_pressed));
+								btn_praise
+										.setImageDrawable(context
+												.getResources()
+												.getDrawable(
+														R.drawable.article_like_pressed));
 							}
 							if (opt.equals("collect")) {
 								btn_collect.setClickable(false);
-								btn_collect.setImageDrawable(context.getResources().getDrawable(R.drawable.article_favorite_pressed));
+								btn_collect
+										.setImageDrawable(context
+												.getResources()
+												.getDrawable(
+														R.drawable.article_favorite_pressed));
 							}
 						}
 					}
@@ -271,15 +312,39 @@ public class ImgArticleActivity extends BaseActivity {
 		executeRequest(gsonRequest);
 
 	}
-
+//	private boolean misScrolled;
 	private OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
 		@Override
-		public void onPageScrollStateChanged(int arg0) {
+		public void onPageScrollStateChanged(int state) {
+//			switch (state) {
+//			case ViewPager.SCROLL_STATE_DRAGGING:
+//				misScrolled = false;
+//				break;
+//			case ViewPager.SCROLL_STATE_SETTLING:
+//				misScrolled = true;
+//				break;
+//			case ViewPager.SCROLL_STATE_IDLE:
+//				if (!misScrolled) {
+//					if (viewPager.getAdapter().getCount() == 1) {
+//						btn_forward.performClick();
+//					} else {
+//						if (viewPager.getCurrentItem() == viewPager
+//								.getAdapter().getCount() - 1) {
+//							btn_forward.performClick();
+//						} else if (viewPager.getCurrentItem() == 0) {
+//							btn_back.performClick();
+//						}
+//					}
+//				}
+//				misScrolled = true;
+//				break;
+//			}
 		}
 
 		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		public void onPageScrolled(int position, float positionOffset,
+				int positionOffsetPixels) {
 		}
 
 		@Override
@@ -287,7 +352,6 @@ public class ImgArticleActivity extends BaseActivity {
 			tvCount.setText((position + 1) + "/"
 					+ viewPager.getAdapter().getCount());
 		}
-
 	};
 
 	class mPagerAdapter extends PagerAdapter {
@@ -387,14 +451,19 @@ public class ImgArticleActivity extends BaseActivity {
 					shareUrl = article.shareUrl;
 					List<String> imageurls = article.body.imageurl;
 					if (imageurls.size() > 0) {
-						tvCount.setText((position1 + 1) + "/"
-								+ article.body.imageurl.size());
-						viewPager.setOnPageChangeListener(onPageChangeListener);
-						viewPager.setAdapter(new mPagerAdapter(
-								article.body.imageurl));
-						viewPager.setCurrentItem(position1);
+						viewPager.setCurrentItem(allImages.indexOf(imageurls.get(0)));
+						tvCount.setVisibility(View.VISIBLE);
+						viewPager.setVisibility(View.VISIBLE);
+//						tvCount.setVisibility(View.VISIBLE);
+//						tvCount.setText((position1 + 1) + "/"
+//								+ article.body.imageurl.size());
+//						viewPager.setOnPageChangeListener(onPageChangeListener);
+//						viewPager.setAdapter(new mPagerAdapter(
+//								article.body.imageurl));
+//						viewPager.setCurrentItem(position1);
 					} else {
-						tvCount.setVisibility(View.GONE);
+//						tvCount.setVisibility(View.GONE);
+						btn_forward.performClick();
 					}
 				} else {
 					DialogUtil.showLoadFailDialog(context);

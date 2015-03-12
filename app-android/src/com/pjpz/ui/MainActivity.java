@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		actionBar.setTitle(R.string.app_name);
 		actionBar.setHomeButtonEnabled(false);
 		actionBar.setDisplayHomeAsUpEnabled(false);
@@ -47,9 +48,7 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 		initView();
 	}
-
 	
-
 	private void initView() {
 		btnTxt = (Button) findViewById(R.id.btn_txtshow);
 		btnImg = (Button) findViewById(R.id.btn_imgshow);
@@ -112,6 +111,7 @@ public class MainActivity extends BaseActivity {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction().replace(viewId, fragment).commit();
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
@@ -126,14 +126,15 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void exit() {
-		 if (!isExit) {
-	            isExit = true;
-	            ToastUtils.showShort("再按一次退出程序");
-	            // 利用handler延迟发送更改状态信息
-	            mHandler.sendEmptyMessageDelayed(11, 2000);
-	        } else {
-	            finish();
-	            System.exit(0);
-	        }
+		if (!isExit) {
+			isExit = true;
+			ToastUtils.showShort("再按一次退出程序");
+			// 利用handler延迟发送更改状态信息
+			mHandler.sendEmptyMessageDelayed(11, 2000);
+		} else {
+			finish();
+			System.exit(0);
+		}
 	}
+
 }

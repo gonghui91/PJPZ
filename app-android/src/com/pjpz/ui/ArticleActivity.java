@@ -8,16 +8,30 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pjpz.R;
+import com.pjpz.data.Constants;
 import com.pjpz.model.Catalog;
 import com.pjpz.ui.fragment.ArticleFragment;
 import com.pjpz.ui.fragment.CommentFragment;
+import com.pjpz.utils.BitmapUtils;
+import com.pjpz.utils.IntentUtils;
 import com.pjpz.utils.OnSelectListener;
+import com.pjpz.utils.ToastUtils;
+import com.sina.weibo.sdk.api.share.BaseResponse;
+import com.sina.weibo.sdk.api.share.IWeiboHandler;
+import com.sina.weibo.sdk.constant.WBConstants;
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-public class ArticleActivity extends BaseActivity implements OnSelectListener {
+public class ArticleActivity extends BaseActivity implements OnSelectListener,
+		IWeiboHandler.Response {
 	private ArticleFragment articleFragment;
 	private CommentFragment commentFragment;
 	private FragmentManager fragmentManager;
@@ -25,6 +39,7 @@ public class ArticleActivity extends BaseActivity implements OnSelectListener {
 	private List<Catalog> catalogs;
 	private Catalog catalog;
 	private int position;
+	private IWXAPI iwxapi;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +48,13 @@ public class ArticleActivity extends BaseActivity implements OnSelectListener {
 		initView();
 		fragmentManager = getFragmentManager();
 		setTabSelection(0);
+		reg(savedInstanceState);
 	}
 
+	private void reg(Bundle savedInstanceState) {
+		iwxapi = WXAPIFactory.createWXAPI(this, Constants.WX_APP_ID, true);
+		iwxapi.registerApp(Constants.WX_APP_ID);
+	}
 	private void initView() {
 		bundle = getIntent().getExtras();
 		String catalogStr = bundle.getString("catalog");
@@ -86,9 +106,8 @@ public class ArticleActivity extends BaseActivity implements OnSelectListener {
 
 		case 1:
 			// 评论
-//			 transaction.setCustomAnimations(R.anim.slide_in_bottom,
-//			 R.anim.slide_in_top);
-			System.out.println(bundle.getString("articleId"));
+			// transaction.setCustomAnimations(R.anim.slide_in_bottom,
+			// R.anim.slide_in_top);
 			if (commentFragment == null) {
 				commentFragment = new CommentFragment();
 				commentFragment.setArguments(bundle);
@@ -169,5 +188,79 @@ public class ArticleActivity extends BaseActivity implements OnSelectListener {
 	@Override
 	public void setTitle(String title) {
 		actionBar.setTitle(title);
+	}
+
+	@Override
+	public void share(int platform, String title, String url) {
+		switch (platform) {
+		case Constants.WECHAT:
+			sendWxReq(url, title, SendMessageToWX.Req.WXSceneSession);
+			break;
+		case Constants.WECHAT_MOMENT:
+			sendWxReq(url, title, SendMessageToWX.Req.WXSceneTimeline);
+			break;
+		case Constants.WEIBO:
+			Bundle bundle = new  Bundle();
+			bundle.putString("title", title);
+			bundle.putString("url", url);
+			IntentUtils.startIntent(ArticleActivity.this, WBShareActivity.class, bundle);
+			break;
+		case Constants.TENCENT:
+
+			break;
+		}
+	}
+
+	private void sendWxReq(String url, String title, int which) {
+		if (!iwxapi.isWXAppInstalled()) {
+			ToastUtils.showShort("未安装微信客户端！");
+			return;
+		}
+		if (!iwxapi.isWXAppSupportAPI()) {
+			ToastUtils.showShort("微信版本问题");
+			return;
+		}
+		WXWebpageObject webpageObject = new WXWebpageObject();
+		webpageObject.webpageUrl = url;
+		WXMediaMessage msg = new WXMediaMessage();
+		msg.mediaObject = webpageObject;
+		switch (which) {
+		case SendMessageToWX.Req.WXSceneSession:
+			msg.description = title;
+			break;
+
+		case SendMessageToWX.Req.WXSceneTimeline:
+			msg.title = title;
+			break;
+		}
+		msg.thumbData = BitmapUtils.Bitmap2Bytes(BitmapUtils
+				.drawableToBitmap(getResources().getDrawable(
+						R.drawable.ic_launcher)));
+		SendMessageToWX.Req req = new SendMessageToWX.Req();
+		req.transaction = String.valueOf(System.currentTimeMillis());
+		req.scene = which;
+		req.message = msg;
+		iwxapi.sendReq(req);
+	}
+
+	@Override
+	public void onResponse(BaseResponse baseResp) {
+		switch (baseResp.errCode) {
+		case WBConstants.ErrorCode.ERR_OK:
+			Toast.makeText(this, "R.string.weibosdk_demo_toast_share_success",
+					Toast.LENGTH_LONG).show();
+			break;
+		case WBConstants.ErrorCode.ERR_CANCEL:
+			Toast.makeText(this, "R.string.weibosdk_demo_toast_share_canceled",
+					Toast.LENGTH_LONG).show();
+			break;
+		case WBConstants.ErrorCode.ERR_FAIL:
+			Toast.makeText(
+					this,
+					"R.string.weibosdk_demo_toast_share_failed"
+							+ "Error Message: " + baseResp.errMsg,
+					Toast.LENGTH_LONG).show();
+			break;
+		}
 	}
 }

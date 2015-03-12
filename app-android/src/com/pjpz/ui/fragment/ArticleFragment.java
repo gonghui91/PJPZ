@@ -24,7 +24,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
-import cn.sharesdk.framework.ShareSDK;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
@@ -36,17 +35,11 @@ import com.pjpz.model.Catalog;
 import com.pjpz.model.Category;
 import com.pjpz.model.OptRequestData;
 import com.pjpz.model.TextArticle;
-import com.pjpz.utils.BitmapUtils;
 import com.pjpz.utils.OnSelectListener;
 import com.pjpz.utils.ToastUtils;
 import com.pjpz.view.CustomProgressDialog;
 import com.pjpz.view.ProgressWebView;
 import com.pjpz.widget.SharePopupWindow;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 public class ArticleFragment extends BaseFragment {
 	private ImageView btn_forward, btn_back;
@@ -57,18 +50,17 @@ public class ArticleFragment extends BaseFragment {
 	private Category category;
 	private CustomProgressDialog progressDialog;
 	private Animation rotate_big, rotate_small;
-	private IWXAPI iwxapi;
 	private String articleName;
 	private String shareUrl;
 	private List<Catalog> catalogs;
 	private Catalog catalog;
 	private int position;
 	/** 微博分享的接口实例 */
+	 // 创建微博分享接口实例
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		context = getActivity();
-		regToWx();
 		view = inflater.inflate(R.layout.layout_article, container, false);
 		btn_forward = (ImageView) view.findViewById(R.id.btn_forward);
 		btn_back = (ImageView) view.findViewById(R.id.btn_back);
@@ -118,42 +110,8 @@ public class ArticleFragment extends BaseFragment {
 		}
 	}
 
-	private void regToWx() {
-		iwxapi = WXAPIFactory.createWXAPI(context, Constants.WX_APP_ID, true);
-		iwxapi.registerApp(Constants.WX_APP_ID);
-	}
+	
 
-	private void sendWxReq(String url, String title, int which) {
-		if (!iwxapi.isWXAppInstalled()) {
-			ToastUtils.showShort("未安装微信客户端！");
-			return;
-		}
-		if (!iwxapi.isWXAppSupportAPI()) {
-			ToastUtils.showShort("微信版本问题");
-			return;
-		}
-		WXWebpageObject webpageObject = new WXWebpageObject();
-		webpageObject.webpageUrl = url;
-		WXMediaMessage msg = new WXMediaMessage();
-		msg.mediaObject = webpageObject;
-		switch (which) {
-		case SendMessageToWX.Req.WXSceneSession:
-			msg.description = title;
-			break;
-
-		case SendMessageToWX.Req.WXSceneTimeline:
-			msg.title = title;
-			break;
-		}
-		msg.thumbData = BitmapUtils.Bitmap2Bytes(BitmapUtils
-				.drawableToBitmap(getResources().getDrawable(
-						R.drawable.ic_launcher)));
-		SendMessageToWX.Req req = new SendMessageToWX.Req();
-		req.transaction = String.valueOf(System.currentTimeMillis());
-		req.scene = which;
-		req.message = msg;
-		iwxapi.sendReq(req);
-	}
 
 	private OnClickListener clickListener = new OnClickListener() {
 
@@ -196,18 +154,19 @@ public class ArticleFragment extends BaseFragment {
 				opt("collect");
 				break;
 			case R.id.iv_share_sina:
-				 shareWBweb();
+				onSelectListener.share(Constants.WEIBO, articleName, shareUrl);
+				if (sharePopup != null) {
+					sharePopup.dismiss();
+				}
 				break;
 			case R.id.iv_share_wechat:
-				sendWxReq(shareUrl, articleName,
-						SendMessageToWX.Req.WXSceneSession);
+				onSelectListener.share(Constants.WECHAT, articleName, shareUrl);
 				if (sharePopup != null) {
 					sharePopup.dismiss();
 				}
 				break;
 			case R.id.iv_share_wechatm:
-				sendWxReq(shareUrl, articleName,
-						SendMessageToWX.Req.WXSceneTimeline);
+				onSelectListener.share(Constants.WECHAT_MOMENT, articleName, shareUrl);
 				if (sharePopup != null) {
 					sharePopup.dismiss();
 				}
@@ -216,53 +175,7 @@ public class ArticleFragment extends BaseFragment {
 		}
 
 	};
-	private void shareWBweb() {
-		ShareSDK.initSDK(context);
-		ShareSDK.setConnTimeout(20000);
-		ShareSDK.setReadTimeout(20000);
-	}
-	
-//	private void shareWBweb() {
-//		WebpageObject mediaObject = new WebpageObject();
-//		mediaObject.identify = Utility.generateGUID();
-//		mediaObject.title = "title title title title";
-//		mediaObject.description = "description description description";
-//		mediaObject.setThumbImage(BitmapUtils.drawableToBitmap(getResources()
-//				.getDrawable(R.drawable.ic_launcher)));
-//		mediaObject.actionUrl = "http://www.baidu.com";
-//		mediaObject.defaultText = "defaultText defaultText defaultText";
-//		WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
-//		weiboMessage.mediaObject = mediaObject;
-//		SendMultiMessageToWeiboRequest req = new SendMultiMessageToWeiboRequest();
-//		req.transaction = String.valueOf(System.currentTimeMillis());
-//		req.multiMessage = weiboMessage;
-//		AuthInfo authInfo = new AuthInfo(context, Constants.WB_APP_ID,
-//				Constants.REDIRECT_URL, Constants.SCOPE);
-//		Oauth2AccessToken accessToken = AccessTokenKeeper
-//				.readAccessToken(context);
-//		String token = "";
-//		if (accessToken != null) {
-//			token = accessToken.getToken();
-//		}
-//		mWeiboShareAPI.sendRequest((Activity) context, req, authInfo, token,
-//				new WeiboAuthListener() {
-//
-//					@Override
-//					public void onWeiboException(WeiboException arg0) {
-//						System.out.println("onWeiboException");
-//					}
-//
-//					@Override
-//					public void onComplete(Bundle arg0) {
-//						System.out.println("onComplete");
-//					}
-//
-//					@Override
-//					public void onCancel() {
-//
-//					}
-//				});
-//	}
+
 	private ProgressWebView webview;
 
 	private void changeBtnStatus() {
@@ -283,6 +196,11 @@ public class ArticleFragment extends BaseFragment {
 			btn_back.setClickable(false);
 			btn_forward.setClickable(false);
 		}
+		btn_praise.setClickable(true);
+		btn_praise.setImageDrawable(context.getResources().getDrawable(R.drawable.article_like_normal));
+		btn_collect.setClickable(true);
+		btn_collect.setImageDrawable(context.getResources().getDrawable(R.drawable.article_favorite_normal));
+	
 	}
 
 	private void opt(final String opt) {
@@ -305,10 +223,12 @@ public class ArticleFragment extends BaseFragment {
 							if (opt.equals("praise")) {
 								btn_praise.setClickable(false);
 								btn_praise.setImageDrawable(context.getResources().getDrawable(R.drawable.article_like_pressed));
+								ToastUtils.showShort("已赞");
 							}
 							if (opt.equals("collect")) {
 								btn_collect.setClickable(false);
 								btn_collect.setImageDrawable(context.getResources().getDrawable(R.drawable.article_favorite_pressed));
+								ToastUtils.showShort("已收藏");
 							}
 						}
 					}
